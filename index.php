@@ -29,10 +29,10 @@ fwrite($p, $str_b);
 //fwrite($p, "1111");
 foreach($arr as $i => $a){
     if($i==0){
-        fwrite($p, "$a<br />");
+        fwrite($p, "<h1>$a</h1>");
 
     }
     else
-    fwrite($p, "$a<br />");
+    fwrite($p, "<p>$a</p>");
 }
 fwrite($p, $str_e);
