@@ -1,29 +1,94 @@
 <?php
-$file = fopen("poem.txt", "r");
-$arr = [];
+include "header.php";
+include "action.php";
+?>
+<section id="One" class="wrapper style3">
+    <div class="inner">
+        <header class="align-center">
+            <p>Sed amet nulla</p>
+            <h2>Elements</h2>
+        </header>
+    </div>
+</section>
+<!-- Main -->
+<div id="main" class="container">
 
-$arr = file("poem.txt") ;
-
-$str_b = '<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>';
-$str_e = '</body>
-</html>';
-
-$p = fopen("index.html", "w");
-fwrite($p, $str_b);
-//fwrite($p, "1111");
-foreach($arr as $i => $a){
-    if($i==0){
-        fwrite($p, "<h1>$a</h1>");
-
+    <!-- Elements -->
+    <h2 id="elements">Elements</h2>
+    <?php
+if (isset($_POST["go"])) {
+    $login = $_POST["login"];
+    $password = $_POST["pass"];
+    if (check_autorize($login)) {
+        echo "Привет, $login!";
+        if (check_admin($login, $password)) {
+            echo "<a href='hello.php?login=$login'>Просмотр отчета</a>";
+        }
+    } else {
+        echo "Вы не зарегистрированы!";
     }
-    else
-    fwrite($p, "<p>$a</p>");
 }
-fwrite($p, $str_e);
+
+echo "\n<h2>Главная страница</h2>\n";
+$str_form = '<span id="massage"></span>
+<form action="index.php" method="post" onsubmit="return verify(this)">
+Логин: <input type="text" name="login">
+Пароль: <input type="password" name="pass">
+<input type="submit" value="OK" name="go">
+</form>';
+echo $str_form;
+
+$str_form_s = '<h3>Сортировать по:</h3>
+<form action="index.php" method="post" name="sort_form">
+<select name="sort" id="sort" size="1">
+    <option value="name">названию</option>
+    <option value="area">площади</option>
+    <option value="population">среднему населению</option>
+</select>
+<input type="submit" name="submit" value="OK">
+</form>';
+echo $str_form_s;
+
+if (isset($_POST['sort'])) {
+    $how_to_sort = $_POST['sort'];
+    sorting($how_to_sort);
+}
+
+$out = out_arr();
+
+if (count($out) > 0) {
+    foreach ($out as $row) {
+        echo $row;
+    }
+} else {
+    echo "Нет данных...";
+}
+
+$str_form_search = "<h3>Поиск:</h3>
+			<form  name='searchForm' action='index.php' method='post' onSubmit='return overify_login(this);' >
+ 			 <input type='text' name='search'>
+ 			 <input type='submit' name='gosearch' value='Подтвердить'>
+ 			 <input type='submit' name='clear' value='Сбросить'>
+ 		     </form>";
+
+echo $str_form_search;
+
+if (isset($_POST['gosearch'])) {
+    $data = test_input($_POST['search']);
+    $out = out_search($data);
+
+// вызов функции out_arr() из action.php для получения массива
+    if (count($out) > 0) {
+        foreach ($out as $row) { //вывод массива построчно
+            echo $row;
+        }
+    } else // если нет данных
+    {
+        echo "Ничего не найдено...";
+    }
+
+//include "content.php"; // Можно вынести таблицу в отдельный файл
+
+}
+echo "</div>";
+include "footer.php";
